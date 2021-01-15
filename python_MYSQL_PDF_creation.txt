@@ -1,0 +1,42 @@
+#create pdf from MYSQL data table using Python
+
+
+import MySQLdb
+from fpdf import FPDF
+
+db=MySQLdb.connect('localhost','root','root','python_db')
+
+cursor = db.cursor()
+
+sqlquery = "select * from student"
+
+try:
+    #executing the query
+    cursor.execute(sqlquery)
+    
+    #fetching exact no of rows using fetchmany().....
+    data= cursor.fetchall()
+    
+    #pdf variable creation
+    pdf = FPDF()
+    
+    #add a page
+    pdf.add_page()
+    
+    #setting style,size & font for the text -pdf
+    pdf.set_font("Arial",size=15)
+    
+    pdf.cell(200,10,txt="-: Student Details :-",ln=1,align='C')
+    
+    for row in data:
+        line  = str(row[0])+"\t"+str(row[1])+"\t"+str(row[2])+"\t"+str(row[3])
+        pdf.cell(200,10,txt=line,ln=1, align = 'L')
+
+    pdf.output("E:/student_data.pdf")
+    print("Done...!")
+except:
+    #Rollback the changes
+    db.rollback()
+
+#close the connection
+db.close()
